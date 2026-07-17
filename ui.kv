@@ -1,0 +1,377 @@
+#:import dp kivy.metrics.dp
+
+<ProductCard>:
+    orientation: "horizontal"
+    size_hint_y: None
+    height: dp(120)
+    padding: dp(10)
+    spacing: dp(10)
+    md_bg_color: 1, 1, 1, 1
+    radius: [16, 16, 16, 16]
+    elevation: 2
+    on_release: app.open_url(self.url)
+    ripple_behavior: True
+
+    MDBoxLayout:
+        size_hint_x: None
+        width: dp(6)
+        md_bg_color: root.store_color
+        radius: [6, 6, 6, 6]
+
+    MDBoxLayout:
+        orientation: "vertical"
+        spacing: dp(4)
+
+        MDLabel:
+            text: root.title_text
+            font_style: "Subtitle1"
+            bold: True
+            theme_text_color: "Custom"
+            text_color: 0.15, 0.15, 0.15, 1
+            shorten: True
+            shorten_from: "right"
+            size_hint_y: None
+            height: dp(24)
+
+        MDLabel:
+            text: root.desc_text
+            font_style: "Caption"
+            theme_text_color: "Custom"
+            text_color: 0.4, 0.4, 0.4, 1
+            size_hint_y: None
+            height: dp(32)
+
+        MDBoxLayout:
+            MDLabel:
+                text: root.store_text
+                font_style: "Caption"
+                theme_text_color: "Custom"
+                text_color: 0.5, 0.5, 0.5, 1
+            MDLabel:
+                text: root.price_text
+                font_style: "H6"
+                bold: True
+                halign: "right"
+                theme_text_color: "Custom"
+                text_color: 0.95, 0.45, 0.1, 1
+
+
+MDScreen:
+    md_bg_color: 1, 1, 1, 1
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        # ---------- ОРАНЖЕВАЯ ШАПКА С ПОИСКОМ ----------
+        MDCard:
+            id: header_card
+            size_hint_y: None
+            height: dp(78)
+            padding: [dp(14), dp(12), dp(14), dp(12)]
+            spacing: dp(10)
+            md_bg_color: 1, 0.55, 0.1, 1
+            radius: [0, 0, dp(26), dp(26)]
+            elevation: 0
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                spacing: dp(10)
+
+                MDCard:
+                    radius: [dp(20), dp(20), dp(20), dp(20)]
+                    md_bg_color: 1, 1, 1, 1
+                    padding: [dp(14), 0, dp(6), 0]
+                    elevation: 0
+
+                    MDTextField:
+                        id: search_field
+                        hint_text: "Название товара, например RTX 4060"
+                        mode: "round"
+                        line_color_normal: 0, 0, 0, 0
+                        line_color_focus: 0, 0, 0, 0
+                        hint_text_color_normal: 0.6, 0.6, 0.6, 1
+                        multiline: False
+                        on_text_validate: app.do_search(self.text)
+
+                    MDIconButton:
+                        icon: "magnify"
+                        theme_text_color: "Custom"
+                        text_color: 1, 0.55, 0.1, 1
+                        on_release: app.do_search(search_field.text)
+
+                MDIconButton:
+                    icon: "tune"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    md_bg_color_disabled: 0, 0, 0, 0
+                    on_release: app.open_filters()
+
+        # ---------- ПАНЕЛЬ ФИЛЬТРОВ (выезжает сверху) ----------
+        MDBoxLayout:
+            id: filter_panel
+            orientation: "vertical"
+            size_hint_y: None
+            height: 0
+            opacity: 0
+            md_bg_color: 1, 0.55, 0.1, 1
+            padding: dp(18)
+            spacing: dp(10)
+
+            canvas.before:
+                Color:
+                    rgba: 1, 0.55, 0.1, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [0, 0, dp(26), dp(26)]
+
+            MDBoxLayout:
+                size_hint_y: None
+                height: dp(36)
+                MDLabel:
+                    text: "ФИЛЬТРЫ"
+                    bold: True
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                MDIconButton:
+                    icon: "close"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    on_release: app.close_filters()
+
+            ScrollView:
+                MDBoxLayout:
+                    orientation: "vertical"
+                    spacing: dp(12)
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                    MDLabel:
+                        text: "Магазины"
+                        bold: True
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 1
+                        size_hint_y: None
+                        height: dp(24)
+
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: dp(40)
+                        MDCheckbox:
+                            id: cb_mediaexpert
+                            active: True
+                            color_active: 1, 1, 1, 1
+                            on_active: app.toggle_store("media_expert", self.active)
+                        MDLabel:
+                            text: "Media Expert"
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: dp(40)
+                        MDCheckbox:
+                            id: cb_mediamarkt
+                            active: True
+                            color_active: 1, 1, 1, 1
+                            on_active: app.toggle_store("media_markt", self.active)
+                        MDLabel:
+                            text: "Media Markt"
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: dp(40)
+                        MDCheckbox:
+                            id: cb_neonet
+                            active: True
+                            color_active: 1, 1, 1, 1
+                            on_active: app.toggle_store("neonet", self.active)
+                        MDLabel:
+                            text: "Neonet"
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: dp(40)
+                        MDCheckbox:
+                            id: cb_rtv
+                            active: True
+                            color_active: 1, 1, 1, 1
+                            on_active: app.toggle_store("rtv_euro_agd", self.active)
+                        MDLabel:
+                            text: "RTV Euro AGD"
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                    MDSeparator:
+
+                    MDLabel:
+                        text: "Цена (zł)"
+                        bold: True
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 1
+                        size_hint_y: None
+                        height: dp(24)
+
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: dp(48)
+                        spacing: dp(10)
+                        MDTextField:
+                            id: price_min_field
+                            hint_text: "От"
+                            input_filter: "float"
+                            on_text: app.set_price_min(self.text)
+                        MDTextField:
+                            id: price_max_field
+                            hint_text: "До"
+                            input_filter: "float"
+                            on_text: app.set_price_max(self.text)
+
+                    MDSeparator:
+
+                    MDLabel:
+                        text: "Состояние товара"
+                        bold: True
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 1
+                        size_hint_y: None
+                        height: dp(24)
+
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: dp(40)
+                        MDCheckbox:
+                            group: "condition"
+                            active: True
+                            color_active: 1, 1, 1, 1
+                            on_active: app.set_condition("any") if self.active else None
+                        MDLabel:
+                            text: "Не важно"
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: dp(40)
+                        MDCheckbox:
+                            group: "condition"
+                            color_active: 1, 1, 1, 1
+                            on_active: app.set_condition("new") if self.active else None
+                        MDLabel:
+                            text: "Новый"
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: dp(40)
+                        MDCheckbox:
+                            group: "condition"
+                            color_active: 1, 1, 1, 1
+                            on_active: app.set_condition("used") if self.active else None
+                        MDLabel:
+                            text: "Б/У"
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                    MDSeparator:
+
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: dp(40)
+                        MDCheckbox:
+                            color_active: 1, 1, 1, 1
+                            on_active: app.set_stock_only(self.active)
+                        MDLabel:
+                            text: "Только в наличии"
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                    MDSeparator:
+
+                    MDLabel:
+                        text: "Сортировка"
+                        bold: True
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 1
+                        size_hint_y: None
+                        height: dp(24)
+
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: dp(40)
+                        MDCheckbox:
+                            group: "sort"
+                            active: True
+                            color_active: 1, 1, 1, 1
+                            on_active: app.set_sort("relevance") if self.active else None
+                        MDLabel:
+                            text: "Релевантность"
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: dp(40)
+                        MDCheckbox:
+                            group: "sort"
+                            color_active: 1, 1, 1, 1
+                            on_active: app.set_sort("price_asc") if self.active else None
+                        MDLabel:
+                            text: "Цена: сначала дешевые"
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: dp(40)
+                        MDCheckbox:
+                            group: "sort"
+                            color_active: 1, 1, 1, 1
+                            on_active: app.set_sort("price_desc") if self.active else None
+                        MDLabel:
+                            text: "Цена: сначала дорогие"
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: dp(50)
+                        spacing: dp(10)
+                        padding: [0, dp(10), 0, 0]
+
+                        MDFlatButton:
+                            text: "Сбросить"
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+                            on_release: app.reset_filters()
+
+                        MDRaisedButton:
+                            text: "Применить"
+                            md_bg_color: 1, 1, 1, 1
+                            theme_text_color: "Custom"
+                            text_color: 1, 0.55, 0.1, 1
+                            on_release: app.close_filters()
+
+        # ---------- СТАТУС + РЕЗУЛЬТАТЫ ----------
+        MDLabel:
+            id: status_label
+            text: "Введите название товара для поиска"
+            halign: "center"
+            size_hint_y: None
+            height: dp(30)
+            theme_text_color: "Custom"
+            text_color: 0.5, 0.5, 0.5, 1
+
+        ScrollView:
+            MDBoxLayout:
+                id: results_box
+                orientation: "vertical"
+                spacing: dp(10)
+                padding: dp(12)
+                size_hint_y: None
+                height: self.minimum_height
